@@ -1,6 +1,7 @@
 package com.qa.util;
 
 
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,8 +22,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-
-public class XLS_reader {
+public class Xls_reader {
 	//public static String filename = System.getProperty("user.dir")+"\\src\\com\\qtpselenium\\xlsx\\Suite.xlsx";
 	public  String path;
 	public  FileInputStream fis = null;
@@ -33,7 +33,7 @@ public class XLS_reader {
 	private XSSFCell cell = null;
 	
 	
-	public XLS_reader(String path) {
+public Xls_reader(String path) {
 		
 		this.path=path;
 		try {
@@ -490,7 +490,7 @@ public class XLS_reader {
 		public static void main(String arg[]) throws IOException{
 			
 			//System.out.println(filename);
-			XLS_reader datatable = null;
+			Xls_reader datatable = null;
 			
 
 				/* datatable = new Xls_Reader(System.getProperty("user.dir")+"\\src\\com\\qtpselenium\\xls\\Controller.xlsx");

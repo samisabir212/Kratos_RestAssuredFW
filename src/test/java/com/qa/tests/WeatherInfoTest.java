@@ -1,85 +1,107 @@
 package com.qa.tests;
 
-
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.qa.util.TestBase;
+import com.qa.util.TestUtil;
+
 import io.restassured.RestAssured;
+import io.restassured.http.Headers;
 import io.restassured.http.Method;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
-
-public class WeatherInfoTest {
+public class WeatherInfoTest extends TestBase{
 	
+	
+	@BeforeMethod
+	public void setUp(){
+		TestBase.init();
+	}
+	
+	@DataProvider
+	public Object[][] getData(){
+		Object testData[][] = TestUtil.getDataFromSheet(TestUtil.WeatherSheetName);
+		return testData;
+	}
+	
+	
+	
+	@Test(dataProvider="getData")
+	public void getWeatherDetailsWithCorrectCityNameTest(String city,	String HTTPMethod, String humidity, String temperature,	
+			String weatherdescription, String windspeed,	String winddirectiondegree){
 		
-	@Test
-	  public void getWeatherDetailsTest(){
+		//1. define the base url
+		//http://restapi.demoqa.com/utilities/weather/city
+		RestAssured.baseURI = prop.getProperty("serviceurl");
+		
+		//2. define the http request:
+		RequestSpecification httpRequest = RestAssured.given();
+		
+		//3. make a request/execute the request:
+		Response response = httpRequest.request(Method.GET, "/"+city);
+		
+		//4. get the response body:
+		String responseBody = response.getBody().asString();
+		System.out.println("Response Body is: "+ responseBody);
+		//validate city name or validate the key or value
+		Assert.assertEquals(responseBody.contains(city), true);
+		
+		//5. get the status code and validate it:
+		int statusCode = response.getStatusCode();
+		System.out.println("the status code is: "+ statusCode);
+		
+		Assert.assertEquals(statusCode, TestUtil.STATUS_CODE_200);
+		
+		System.out.println("the status line is: "+ response.getStatusLine());
+		
+		//6. get the headers:
+		Headers headers = response.getHeaders();
+		System.out.println(headers);
+		
+		String contentType = response.getHeader("Content-Type");
+		System.out.println("the value of content-type header is: "+ contentType);
+		
+		String contentLength = response.getHeader("Content-Length");
+		System.out.println("the value of Content-Length header is: "+ contentLength);
 
-	        //1.define the base url
-	        RestAssured.baseURI ="http://restapi.demoqa.com/utilities/weather/city";
-
-	        //2. define the http request object
-	        RequestSpecification httprequest = RestAssured.given();
-
-	        /*
-	        make a request/execute the request in the same time
-	        put it inside a response object and validate that response 
-	        with an assertion
-	        */
-	        Response response = httprequest.request(Method.GET,"/Pune");
-	        
-	        System.out.println(response);
-
-	        //System.out.println(response.getBody().asString());
-
-	        //get response body as string
-	        String responseBody = response.getBody().asString();
-
-	        //assert that the body has something your looking for
-	        Assert.assertEquals(responseBody.contains("Pune"), true);
-
-	        System.out.println("Response body is :: "+responseBody);
-
-	       int statuscode = response.getStatusCode();
-
-	       System.out.println("Status code is :: "+statuscode);
-
-	       System.out.println("status session ID is :: " + response.getSessionId() );
-	       System.out.println("status line of code is :: "+ response.getStatusLine());
-	       System.out.println("this is pretty print :: "+ response.prettyPrint());
-	       System.out.println("this is getting the cookies "+response.getCookies());
-	       System.out.println("this is getting the headers "+ response.getHeaders());
-	       System.out.println("this is getting the jsonPath "+ response.jsonPath());
-	       System.out.println("this is getting the content type "+ response.contentType());
-	       System.out.println("this is getting the time "+ response.getTime());
-
-	       String connection = response.getHeader("Connection");
-	       System.out.println("This is getting the connection "+connection);
-
-
-	       Assert.assertEquals(statuscode, 201);
-
-	       JsonPath jspath=response.jsonPath();
-
-	       //get the key value by using jsonpath
-	       //pass the key as the parameter to get the value
-	       String city = jspath.get("City");
-	       System.out.println("City is :: "+city);
-
-	       String temperature = jspath.getString("Temperature");
-	       System.out.println(temperature);
-
-	        //softAssert.assertEquals(200, 200);
+		//get the key value by using JsonPath:
+		JsonPath jsonPathValue = response.jsonPath();
+		String cityVal = jsonPathValue.get("City");
+		System.out.println("the value of city is: "+ cityVal);
+		
+		Assert.assertEquals(cityVal, city);
+		
+		String temp = jsonPathValue.get("Temperature");
+		System.out.println("the value of Temperature is: "+ temp);
+		Assert.assertEquals(temp, temperature);
 
 
+		String Humidity = jsonPathValue.get("Humidity");
+		System.out.println("the value of Humidity is: "+ Humidity);
 
+		String WeatherDescription = jsonPathValue.get("WeatherDescription");
+		System.out.println("the value of WeatherDescription is: "+ WeatherDescription);
 
+		String WindSpeed = jsonPathValue.get("WindSpeed");
+		System.out.println("the value of WindSpeed is: "+ WindSpeed);
 
+		String WindDirectionDegree = jsonPathValue.get("WindDirectionDegree");
+		System.out.println("the value of WindDirectionDegree is: "+ WindDirectionDegree);
 
-
-	    }
-
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 
 }

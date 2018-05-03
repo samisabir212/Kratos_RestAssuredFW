@@ -4,30 +4,13 @@
 <!-- Suite -->
 <suite name="Suite">
 
-	<!-- Test -->
-	<test thread-count="5" name="Test">
 	
-	<groups>
-		<run>
-			
-		</run>
-	</groups>
-
-		<classes>
-		</classes>
-
-	</test> 
 	
-	<test name="PostCalls">
-	
-	<groups>
-		<run>
-		</run>
-	</groups>
+	<test name="getcall With Excel">
 	
 	
 	<classes>
-		<class name=""></class>
+		<class name="com.qa.tests.WeatherInfoTest"></class>
 	</classes>
 	
 	</test>
